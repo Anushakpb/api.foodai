@@ -1,0 +1,374 @@
+FORMAT: 1A
+HOST: http://api.foodai.org/v1
+
+# Food Recognition API
+
+Make the most of your application with the Food Recognition API
+
+## Online Testing
+One could use the online [**testing suite**](http://docs.foodai.apiary.io/) for a better understading and fast development.
+
+## Authorization
+
+For security and rate limiting concern, each request is required to include the `api_key` in the header:
+
+```http
+Authorization: 5262d64b892e8d4341000001
+```
+
+## Status Code Table
+Code | Description
+--:| -----------
+4010  | invalid request
+4011  | no image provided
+4012  | unsupported image type
+4013  | invalid image
+4014  | download image timeout
+4015  | image size overflow
+4016  | runtime error
+4021  | invalid query
+4022  | invalid tag
+
+# Data Structures
+
+## RequestData
+
+
+
+# Group Classify
+
+## Request for Classification [/classify]
+
+### Send by GET [GET /classify{?image_url,qid,num_tags}]
+
+The classification endpoint returns the recognition result of a image provided by the user by sending `url` or `base64` encoded data.
+
+Caller can optionally assign the request a `qid` defined by caller in order to make correspondence between request and response.
+
++ Parameters
+
+    + image_url: http://example.org/a.jpg  (required, string) - url or base64 for the image to be classified
+
+    + qid: 1 (optional, integer) - query id defined by caller
+      + default: 100
+
+    + num_tags: 10 (optional, integer) - number of tags to be returned
+      + default: 100
+
++ Response 200
+
+    The server successfully processed the request and a classification result is provided in the response data.
+
+    + Body
+
+            {
+              "code": 200,
+              "guid": "9215b55b892b58eca23cb571f6867a47",
+              "need_check": "false",
+              "qid": 1111,
+              "status": "ok",
+              "tags": [
+                [
+                  "Bak Chang",
+                  "0.82016"
+                ],
+                [
+                  "lei cha fan",
+                  "0.08697"
+                ],
+                [
+                  "Bak Chor Mee",
+                  "0.06155"
+                ],
+                [
+                  "Nasi Goreng",
+                  "0.01261"
+                ],
+                [
+                  "Onde Onde",
+                  "0.00604"
+                ],
+                [
+                  "Nasi Lemak",
+                  "0.00226"
+                ],
+                [
+                  "Nasi Briyani",
+                  "0.00215"
+                ],
+                [
+                  "Fried Sweet Potato_Balls",
+                  "0.00199"
+                ],
+                [
+                  "Begedil",
+                  "0.00131"
+                ],
+                [
+                  "Claypot Rice",
+                  "0.00117"
+                ]
+              ],
+              "time_cost": 0.02
+            }
+
+
+    + Schema
+
+
+
+### Send by POST [POST /classify]
+
+The classification endpoint returns the recognition result of a image provided by the user by sending `url` or `base64` encoded data.
+
+Caller can optionally assign the request a `qid` defined by caller in order to make correspondence between request and response.
+
++ Attributes
+    + image_url: http://example.org/a.jpg  (required, string) - url or base64 for the image to be classified
+    + qid: 100 (number, optional) - query id defined by caller
+      + default: 100
+    + num_tags: 10 (optional, number) - number of tags to be returned
+      + default: 100
+      
++ Request (application/json)
+
++ Response 200 (application/json)
+
+    The server successfully processed the request and a classification result is provided in the response data.
+
+    + Body
+
+            {
+              "code": 200,
+              "guid": "9215b55b892b58eca23cb571f6867a47",
+              "need_check": "false",
+              "qid": 1111,
+              "status": "ok",
+              "tags": [
+                [
+                  "Bak Chang",
+                  "0.82016"
+                ],
+                [
+                  "lei cha fan",
+                  "0.08697"
+                ],
+                [
+                  "Bak Chor Mee",
+                  "0.06155"
+                ],
+                [
+                  "Nasi Goreng",
+                  "0.01261"
+                ],
+                [
+                  "Onde Onde",
+                  "0.00604"
+                ],
+                [
+                  "Nasi Lemak",
+                  "0.00226"
+                ],
+                [
+                  "Nasi Briyani",
+                  "0.00215"
+                ],
+                [
+                  "Fried Sweet Potato_Balls",
+                  "0.00199"
+                ],
+                [
+                  "Begedil",
+                  "0.00131"
+                ],
+                [
+                  "Claypot Rice",
+                  "0.00117"
+                ]
+              ],
+              "time_cost": 0.02
+            }
+
+    + Schema
+
+            {
+              "type": "object",
+              "properties": {
+                "qid": {
+                  "type": "integer",
+                  "description": "query id provided by the caller, if not, this will be set to the default value"
+                },
+                "code": {
+                  "type": "integer",
+                  "description": "status code. `200` represents a successful state, otherwise, please look up the error code table."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Human readable message explaining `code` number above."
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "An array of tags and corresponding confidence arrays."
+                },
+                "time_cost": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Seconds used in processing the request."
+                },
+                "need_check": {
+                  "type": "boolean",
+                  "description": "Whether a manual check is required for the classification result."
+                },
+                "guid": {
+                  "type": "string",
+                  "description": "An unique id for the provided image."
+                }
+              }
+            }
+
+# Group Feedback
+
+## Feedback Portal [/feedback]
+
+### Provide feedback [GET /feedback{?guid,correct,tag}]
+
+Users could provide feedback to help us improve the model
+
++ Parameters
+
+    + guid: 9215b55b892b58eca23cb571f6867a47 (required, string) - An unique id for the provided image, returned after each request.
+
+    + correct: 0(required, number) - `0` for wrong, `1` for correct
+        + Members
+            + 0
+            + 1
+
+    + tag: Unknown (optional, string) - Correct label proposed by human
+        + Members
+            + Appam
+            + Assam pedas
+            + Ayam buah keluak
+            + Ayam penyet
+            + Bak chang
+            + Bak chor mee
+            + Bak kut teh
+            + Bak kwa
+            + Ban mian
+            + Bihun goreng
+            + Black pepper crab
+            + Bubble tea
+            + Cereal prawns
+            + Chai tow kway
+            + Chapati
+            + Char kway teow
+            + Char siew rice
+            + Chicken curry
+            + Chicken rice
+            + Chilli crab
+            + Chin chow drink
+            + Chwee jia bao
+            + Chwee kueh
+            + Claypot rice
+            + Coffee
+            + Curry puff
+            + Dosa
+            + Drunken prawn
+            + Duck rice
+            + Durian
+            + Fish ball
+            + Fish head bee_hoon
+            + Fish head curry
+            + Fish head steamboat
+            + Fried bee hoon
+            + Fried hokkien mee
+            + Fried sweet potato balls
+            + Hainanese kueh
+            + Har cheong gai
+            + Hum chim peng
+            + Ice kacang
+            + Jackfruit
+            + Kari lemak ayam
+            + Kaya toast
+            + Keropok
+            + Ketupat
+            + Kueh pie tee
+            + Kway chap
+            + Laksa
+            + Lei cha fan
+            + Lemon barley drink
+            + Longan
+            + Lontong
+            + Lor mee
+            + Lychee
+            + Mangosteen
+            + Mee goreng
+            + Mee rebus
+            + Mee siam
+            + Mee suah
+            + Muah chee
+            + Murtabak
+            + Mutton soup
+            + Nasi briyani
+            + Nasi goreng
+            + Nasi lemak
+            + Ngoh hiang
+            + Onde onde
+            + Otak-otak
+            + Oyster omelette
+            + Pig's organ soup
+            + Pineapple
+            + Popiah
+            + Pork floss
+            + Porridge
+            + Prawn mee
+            + Pulut hitam
+            + Rambutan
+            + Rojak
+            + Roti prata
+            + Sambal
+            + Sambal kangkong
+            + Sambal stingray
+            + Satay
+            + Soon kway
+            + Soto ayam
+            + Sugar cane juice
+            + Tandoori
+            + Tauhu goreng
+            + Tau sar piah
+            + Teh tarik
+            + Thosai
+            + Tiger beer
+            + Tumpeng
+            + Tutu kueh
+            + Wanton mee
+            + Xiao long bao
+            + Yong tau foo
+            + Youtiao
+            + Yusheng
+            + Unknown
+
++ Response 200
+
+    Status message.
+
+    + Body
+
+    + Schema
+
+            {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
