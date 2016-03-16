@@ -1,0 +1,181 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Food Recognition API
+  description: Make the most of your application with the Food Recognition API
+  version: "1.0.0"
+# the domain of the service
+host: api.foodai.org
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /classify:
+    get:
+      summary: Recognize an image by GET
+      description: |
+        The classification endpoint returns the recognition result of a image provided by the user by sending `url` or `base64` encoded data.
+        
+        Caller can optionally assign the request a `qid` defined by caller in order to make correspondence between request and response.
+        
+        Error code table  
+        4010  | invalid request  
+        4011  | no image provided  
+        4012  | unsupported image type  
+        4013  | invalid image  
+        4014  | download image timeout  
+        4015  | image size overflow  
+        4016  | runtime error  
+        4021  | invalid query  
+        4022  | invalid tag  
+      parameters:
+        - name: image_url
+          in: query
+          description: url or base64 for the image to be classified
+          required: true
+          type: string
+          format: string
+        - name: qid
+          in: query
+          description: query id
+          required: false
+          type: number
+          format: integer
+        - name: num_tags
+          in: query
+          description: number of tags to be retured, default is 100
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Classify
+      responses:
+        200:
+          description: The server successfully processed the request and a classification result is provided in the response data.
+          schema:
+            $ref: '#/definitions/Result'
+        default:
+          description: An error occurred, the caller could lookup the error code table to identify the specific reason for this failure.
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Recognize an image by POST
+      description: |
+        The classification endpoint returns the recognition result of a image provided by the user by sending `url` or `base64` encoded data.
+        
+        Caller can optionally assign the request a `qid` defined by caller in order to make correspondence between request and response.
+      parameters:
+        - name: image_url
+          in: formData
+          description: url or base64 for the image to be classified
+          required: true
+          type: string
+          format: string
+        - name: qid
+          in: formData
+          description: query id
+          required: false
+          type: number
+          format: integer
+        - name: num_tags
+          in: formData
+          description: number of tags to be retured, default is 100
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Classify
+      responses:
+        200:
+          description: The server successfully processed the request and a classification result is provided in the response data.
+          schema:
+            $ref: '#/definitions/Result'
+        default:
+          description: An error occurred, the caller could lookup the error code table to identify the specific reason for this failure.
+          schema:
+            $ref: '#/definitions/Error'
+  /feedback:
+    get:
+      summary: Provide feedback on specified task
+      description: Users could provide feedback to help us improve the model
+      parameters:
+        - name: guid
+          in: query
+          type: string
+          description: The unique id returned by the server within a successful classification result
+          required: true
+        - name: correct
+          in: query
+          description: Whether the provided result is correct
+          required: true
+          type: number
+          format: int32
+        - name: tag
+          in: query
+          description: correct tag for the image
+          required: false
+          type: string
+      tags:
+        - Feedback
+      responses:
+        200:
+          description: Status message.
+          schema:
+            $ref: '#/definitions/Feedback'
+        default:
+          description: An error occurred, the caller could lookup the error code table to identify the specific reason for this failure.
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Result:
+    type: object
+    properties:
+      qid:
+        type: integer
+        description: query id provided by the caller, if not, this will be set to the default value
+      code:
+        type: integer
+        description: status code. `200` represents a successful state, otherwise, please look up the error code table.
+      status:
+        type: string
+        description: Human readable message explaining `code` number above.
+      tags:
+        type: array
+        items:
+          $ref: '#/definitions/Tag'
+        description: An array of tags and corresponding confidence arrays.
+      time_cost:
+        type: number
+        format: double
+        description: Seconds used in processing the request.
+      need_check:
+        type: boolean
+        description: Whether a manual check is required for the classification result.
+      guid:
+        type: string
+        description: An unique id for the provided image.
+  Tag:
+    type: array
+    items:
+      type: string
+  Feedback:
+    type: object
+    properties:
+      code:
+        type: integer
+      status:
+        type: string
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        description: error code
+      status:
+        type: string
+        description: Human readable message explaining `code` number above.
