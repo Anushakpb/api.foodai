@@ -39,7 +39,7 @@ Code | Description
 
 ## Request for Classification [/classify]
 
-### Send by GET [GET /classify{?image_url,qid,num_tags}]
+### Send by GET [GET /classify{?image_url,qid,num_tag}]
 
 The classification endpoint returns the recognition result of a image provided by the user by sending `url` or `base64` encoded data.
 
@@ -52,7 +52,7 @@ Caller can optionally assign the request a `qid` defined by caller in order to m
     + qid: 1 (optional, integer) - query id defined by caller
       + default: 100
 
-    + num_tags: 10 (optional, integer) - number of tags to be returned
+    + num_tag: 10 (optional, integer) - number of tags to be returned
       + default: 100
 
 + Response 200
@@ -119,18 +119,24 @@ Caller can optionally assign the request a `qid` defined by caller in order to m
 
 ### Send by POST [POST /classify]
 
-The classification endpoint returns the recognition result of a image provided by the user by sending `url` or `base64` encoded data.
-
-Caller can optionally assign the request a `qid` defined by caller in order to make correspondence between request and response.
+Since JSON doesn't support sending data in binary format, the caller have to convert the image binary into `base64` format and include in the `image_url` field.
+Or the caller can choose to send the data in `multipart/form-data`, and include the binary in `image_data` field. If `image_data` is supplied, `image_url` can be empty.
 
 + Attributes
     + image_url: http://example.org/a.jpg  (required, string) - url or base64 for the image to be classified
     + qid: 100 (number, optional) - query id defined by caller
       + default: 100
-    + num_tags: 10 (optional, number) - number of tags to be returned
+    + num_tag: 10 (optional, number) - number of tags to be returned
       + default: 100
-      
-+ Request (application/json)
+    + image_data (optional) - image binary. 
+
++ Request `application/json` (application/json)
+
+        {
+            "image_url": "http://blog-imgs-24.fc2.com/k/u/i/kuimakuru/20080525_5s.jpg",
+            "num_tag": 10,
+            "qid": 12321
+        }
 
 + Response 200 (application/json)
 
@@ -232,6 +238,118 @@ Caller can optionally assign the request a `qid` defined by caller in order to m
               }
             }
 
++ Request `multipart/form-data` (multipart/form-data; boundary=__BOUNDARY__)
+
+        --__BOUNDARY__
+        
+        Content-Disposition: form-data; name="image_url"
+        
+        
+        
+        http://blog-imgs-24.fc2.com/k/u/i/kuimakuru/20080525_5s.jpg
+        
+        --__BOUNDARY__
+        
+        Content-Disposition: form-data; name="qid"
+        
+        
+        
+        13
+        
+        --__BOUNDARY__
+        
+        Content-Disposition: form-data; name="num_tag"
+        
+        
+        
+        4
+        
+        --__BOUNDARY__--
+        
+        
+
++ Response 200 (application/json)
+
+    + Headers
+
+            X-RateLimit-Remaining: -1
+
+    + Body
+
+            {
+              "code": 200, 
+              "guid": "fd57d60446204f3e7c5aa0ae8e9f7185", 
+              "need_check": "false", 
+              "qid": 13, 
+              "status": "ok", 
+              "tags": [
+                [
+                  "Laksa", 
+                  "0.99878"
+                ], 
+                [
+                  "Soto Ayam", 
+                  "0.00078"
+                ], 
+                [
+                  "Fish Head Bee_Hoon", 
+                  "0.00035"
+                ], 
+                [
+                  "Mee Rebus", 
+                  "0.00006"
+                ]
+              ], 
+              "time_cost": 0.02
+            }
+
++ Request `application/x-www-form-urlencoded` (application/x-www-form-urlencoded)
+
+    + Headers
+
+            Authorization: 5262d64b892e8d4341000001
+
+    + Body
+
+            image_url=http%3A%2F%2Fblog-imgs-24.fc2.com%2Fk%2Fu%2Fi%2Fkuimakuru%2F20080525_5s.jpg&qid=43&num_tag=4
+
++ Response 200 (application/json)
+
+    + Headers
+
+            X-RateLimit-Remaining: -1
+
+    + Body
+
+            {
+              "code": 200, 
+              "guid": "fd57d60446204f3e7c5aa0ae8e9f7185", 
+              "need_check": "false", 
+              "qid": 43, 
+              "status": "ok", 
+              "tags": [
+                [
+                  "Laksa", 
+                  "0.99878"
+                ], 
+                [
+                  "Soto Ayam", 
+                  "0.00078"
+                ], 
+                [
+                  "Fish Head Bee_Hoon", 
+                  "0.00035"
+                ], 
+                [
+                  "Mee Rebus", 
+                  "0.00006"
+                ]
+              ], 
+              "time_cost": 0.02
+            }
+
+
+
 # Group Feedback
 
 ## Feedback Portal [/feedback]
@@ -249,7 +367,7 @@ Users could provide feedback to help us improve the model
             + 0
             + 1
 
-    + tag: Unknown (optional, string) - Correct label proposed by human
+    + tag: Non_Food (optional, string) - Correct label proposed by human
         + Members
             + Appam
             + Assam pedas
@@ -351,7 +469,7 @@ Users could provide feedback to help us improve the model
             + Yong tau foo
             + Youtiao
             + Yusheng
-            + Unknown
+            + Non_Food
 
 + Response 200
 
