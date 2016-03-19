@@ -128,7 +128,7 @@ Or the caller can choose to send the data in `multipart/form-data`, and include 
       + default: 100
     + num_tag: 10 (optional, number) - number of tags to be returned
       + default: 100
-    + image_data (optional) - image binary. 
+    + image_data (optional) - image binary.
 
 + Request `application/json` (application/json)
 
@@ -238,35 +238,76 @@ Or the caller can choose to send the data in `multipart/form-data`, and include 
               }
             }
 
+
++ Request `multipart/form-data` with image file (multipart/form-data; boundary=__BOUNDARY__)
+
+        --__BOUNDARY__
+        Content-Disposition: form-data; name="image_data"; filename="220px-Katong_Laksa.jpg"
+        Content-Type: image/jpeg
+
+        ......JFIF.....`.`.....C...............
+        ,6.......EF...*..#...r.Y....J.\L"N.....o...SS...}..@V..{'..F>}~T..r\.aB.5......~.*.W....R!....H#~...V.`?..#
+        .s........q.@...H]w8..b.......@..xrv.........(..
+        s..|...O ......O. .:.V..H.....@....+.|.......9;o.............5`...7.#sL.;..*pN...!
+        .yY.9......Sq...Q.....9n..`.....5,......2rA......pJo. )....M...G..'+.........V.s......9R..
+        .u..]A......N\.P..&.U...........H[..?.....s........p.......+..a....@zc....1....w....h.5..Ta.......z?21..........'....o..y..2.n2s..
+        .&A.......O>!.h..x;d.}....0X....@?.r7;.4....O\.....1.....Z.........,....y}(..x[;.I.)]....
+        .*].....t........*X...^#.`o..!...Y......B.S.N6..@./.....i.%..1.:C<..{
+        .j...>.....R."@....Q..P.......R\..!$3`......cH.h......r=..nT..,....H...I..?J....y.M..D......
+        vM..z@Y........M.x.1..}....
+        --__BOUNDARY__
+        Content-Disposition: form-data; name="image_url"
+
+
+        --__BOUNDARY__
+
+        Content-Disposition: form-data; name="qid"
+
+
+
+        13
+
+        --__BOUNDARY__
+
+        Content-Disposition: form-data; name="num_tag"
+
+
+
+        4
+
+        --__BOUNDARY__--
+
+
+
 + Request `multipart/form-data` (multipart/form-data; boundary=__BOUNDARY__)
 
         --__BOUNDARY__
-        
+
         Content-Disposition: form-data; name="image_url"
-        
-        
-        
+
+
+
         http://blog-imgs-24.fc2.com/k/u/i/kuimakuru/20080525_5s.jpg
-        
+
         --__BOUNDARY__
-        
+
         Content-Disposition: form-data; name="qid"
-        
-        
-        
+
+
+
         13
-        
+
         --__BOUNDARY__
-        
+
         Content-Disposition: form-data; name="num_tag"
-        
-        
-        
+
+
+
         4
-        
+
         --__BOUNDARY__--
-        
-        
+
+
 
 + Response 200 (application/json)
 
@@ -277,29 +318,29 @@ Or the caller can choose to send the data in `multipart/form-data`, and include 
     + Body
 
             {
-              "code": 200, 
-              "guid": "fd57d60446204f3e7c5aa0ae8e9f7185", 
-              "need_check": "false", 
-              "qid": 13, 
-              "status": "ok", 
+              "code": 200,
+              "guid": "fd57d60446204f3e7c5aa0ae8e9f7185",
+              "need_check": "false",
+              "qid": 13,
+              "status": "ok",
               "tags": [
                 [
-                  "Laksa", 
+                  "Laksa",
                   "0.99878"
-                ], 
+                ],
                 [
-                  "Soto Ayam", 
+                  "Soto Ayam",
                   "0.00078"
-                ], 
+                ],
                 [
-                  "Fish Head Bee_Hoon", 
+                  "Fish Head Bee_Hoon",
                   "0.00035"
-                ], 
+                ],
                 [
-                  "Mee Rebus", 
+                  "Mee Rebus",
                   "0.00006"
                 ]
-              ], 
+              ],
               "time_cost": 0.02
             }
 
@@ -322,29 +363,29 @@ Or the caller can choose to send the data in `multipart/form-data`, and include 
     + Body
 
             {
-              "code": 200, 
-              "guid": "fd57d60446204f3e7c5aa0ae8e9f7185", 
-              "need_check": "false", 
-              "qid": 43, 
-              "status": "ok", 
+              "code": 200,
+              "guid": "fd57d60446204f3e7c5aa0ae8e9f7185",
+              "need_check": "false",
+              "qid": 43,
+              "status": "ok",
               "tags": [
                 [
-                  "Laksa", 
+                  "Laksa",
                   "0.99878"
-                ], 
+                ],
                 [
-                  "Soto Ayam", 
+                  "Soto Ayam",
                   "0.00078"
-                ], 
+                ],
                 [
-                  "Fish Head Bee_Hoon", 
+                  "Fish Head Bee_Hoon",
                   "0.00035"
-                ], 
+                ],
                 [
-                  "Mee Rebus", 
+                  "Mee Rebus",
                   "0.00006"
                 ]
-              ], 
+              ],
               "time_cost": 0.02
             }
 
