@@ -9,13 +9,7 @@ Make the most of your application with the Food Recognition API
 One could use the online [**testing suite**](http://docs.foodaiorg.apiary.io/) for a better understading and fast development.
 Also, this link can also provide serveral code snippets in different languages to help you accelerate your development process.
 
-## Authorization
 
-For security and rate limiting concern, each request is required to include the `api_key` in the header:
-
-```http
-Authorization: 5262d64b892e8d4341000001
-```
 
 ## Status Code Table
 Code | Description
@@ -122,6 +116,12 @@ Caller can optionally assign the request a `qid` defined by caller in order to m
 
 Since JSON doesn't support sending data in binary format, the caller have to convert the image binary into `base64` format and include in the `image_url` field.
 Or the caller can choose to send the data in `multipart/form-data`, and include the binary in `image_data` field. If `image_data` is supplied, `image_url` can be empty.
+
+__Note:__ For security and rate limiting concern, each request is recommended to include the `api_key` in the HTTP header, thus your requests will only be limited by the quota assigned to that key. Otherwise, the server may reject your requests without notification. 
+
+```http
+Authorization: 5262d64b892e8d4341000001
+```
 
 + Attributes
     + image_url: http://example.org/a.jpg  (required, string) - url or base64 for the image to be classified
